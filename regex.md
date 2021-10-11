@@ -39,8 +39,8 @@ set of strngs tjat can be matched in one fell swoop using only a fixed size of m
 ### Flags
 |flag |description|
 |-----|------------|
-|`i`|make `re` case-insensitive|
-|`m`|this flag is powerful. Naturally, `^` and `$` would macth the beginning and end of a string or text, but `m` makes them matc the beginning and end of a new line if the string is multi-lined (i.e. it has `\n` characters in it)|
+|`i`|make `re` case-insensitive, default is false|
+|`m`|this flag is powerful. Naturally, `^` and `$` would macth the beginning and end of a string or text, but `m` makes them match the beginning and end of a new line if the string is multi-lined (i.e. it has `\n` characters in it)|
 |`s`| it lets `.` match newline charcater|
 |U|powerful too. makes all repetitions ungreedy. i.e. `x*` becomes `x*?`, `x+` becomes `x+?`, `x?` becomes `x??` etc.|
 
@@ -95,4 +95,65 @@ Everything inside an un-escaped `()` pair is a group. The following are the sema
 ### Empty strings
 |`re`|description|
 |-----|----|
-|||
+|`^`|matchss the beginning of a string. If `m` flsg is set, this character also matches the beginning of a new line|
+|`$`|matches the end of a string(or text). It is same as `\z`, **not** `\Z`. If `m` flag is set, the same `$` character matches the end of a line|
+|`\A`| beginning of string(or text) anyday regardless of `m` flag's value|
+|`\b`|quite cool, slightly complex, but it isn't. It matches an `ascii` word boundary, what this means is that that there's `\w` (ascii word) on one side, and a `\W` i.e. non-ascii on the other side, or an `\A` beginning of a new text or a `\z` meaning end of text on the other side. Remember that characters like `\n` new line are ascii, I guess that's why `$` won't work here|
+|`\B`| not an ascii word boundary. What does this even mean? Is it useful? Wel it does, it matches _non-strings_ or *empty strings* that negate the condition stated above|
+|`\z`| mentioned above. it means end of text or end of string|
+
+
+### Escape Sequences
+we need escape sequences to match what charcters would have been interpreted as metacharacters if left unescaped
+|`re`|description|
+|----|-----|
+|`\a`|ascii bell character `\007`|
+|`\f`|form feed `014`|
+|`\*`|needed to escape the metacharacter `*` which stands for anything apart from newline (except when the `s` flag is set, remember?)|
+|`\r`|carriage return|
+|`\t`|tab space|
+|`\123`|octal character code, up to three digits|
+|`\x7F`|hex character code, exactly 2 diits, this would be an ascii character, i guess|
+|`\x{10FFFF}`|macthes hex character code, standing for character, would be utf-8 I guess|
+|`\C`|this matches a single byte, any single byte, even when in utf-8 mode|
+
+
+### Character Classes
+Character classes are usually in between `[` and `]`. And when theyre used,t tyey match only one character. This character can of course be repeated, can be selected from a set of possible characters.
+|type|description|
+|----|----|
+|`x`|the simplest, matches the exact literal, if it is also a metacharacter, you have to escape it|
+|`A-Z`|a character range, chooses one that matches. its inclusive|
+|`\d`| example of *perl* character class|
+|`[:foo:]`|example of ascii character class|
+|`\p{Foo}`|names Unicode character class. Class name is `Foo`|
+|`\pF`|second type of Unicode character class. This ine is one-lettered|
+
+Now to use named character classes as class elements:
+|`re`|descritpion|
+|----|-----|
+|`[\d]`|digits, any digit|
+|`[\D]` or `[^\d]`|Not a digit, notice how a character class element is negated|
+|`[^\D]`|`| 	not not digits (≡ \d)|
+|`[[:name:]]`| 	named ASCII class inside character class |
+|`[^[:name:]]`| 	named ASCII class inside negated character class|
+|`[\p{Name}]`| 	named Unicode property inside character class |
+|`[^\p{Name}]`| 	named Unicode property inside negated character class|
+
+
+### Perl Character Casses
+All Perl character classes match ascii characters
+|`re`|description|
+|----|----|
+|`\d`|digits. equivalent to `[0-9]`|
+|`\D` or `^\d`|not digit. equivalent to `[^0-9]`|
+|`\s` |anything space. equivalent to `[\t\f\n ]`, i.e tab, form feed, newline, and space. All ascii one-byte characters|
+|`\S`|opposite of `\s`|
+|`\w`|ascii word. equivalent to `[0-9a-zA-Z_]`, i.e the character class that consists of the range of digits, lower-case letters, upper-case letters, and `_`|
+|`\w`|opposite of `\w`. equivalent to `^\w`|
+
+
+### ASCII Character Classes
+
+
+
