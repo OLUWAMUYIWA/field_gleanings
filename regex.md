@@ -1,5 +1,6 @@
 ### What is Regex?
-//Todo: look for two complex examples of regex in use and tear them apart
+
+[comment]: <> (Todo: look for two complex examples of regex in use and tear them apart)
 > Here are the two most important resources describing **regex** that I've seen:  
 > - Syntax: [re2](https://github.com/google/re2/wiki/Syntax)
 > - Concept: [russ cox](https://swtch.com/~rsc/regexp/regexp1.html)
@@ -158,6 +159,6 @@ All Perl character classes match ascii characters
 
 
 ## How To Implement **Regex**
-
+[comment]: <> (I'm reading about Finite state automata so I can understand this more deeply)
 
 
