@@ -154,7 +154,8 @@ Consider:
 What then is division? Division must define when a number `goes into` another. Generally, we say that a polynomial `b` goes into another polynomial `a` if the highest power of  
 `b` is <= the highest power of `a` and the coefficient of that elemt with the higest power in `b` is <= that of `a`. This is not the way a mathematician will put it, but please manage. Forgive.
 
- e.g. ```
+e.g. 
+```
              1100001010
        _______________
 10011 | 11010110110000
@@ -197,6 +198,7 @@ The quotient is useless. The remainder will either have width `w` or less. Think
 sized as `w` even if it is less than `w` in length. If it is less than `w` in length, then zeroes will fill in the first few positions to make up for it.
 The reason is because when we want to evaluate the integrity of the data, we would only need to divide by the polynomial we chose (which is usually chosen by a standard) and check that it yields zero as remainder. Now, I'll explain why it must be so if you don't see it yet. (I didn't see it at first because it wasn't clearly stated that the register size mut retain its width when appending te remainder to the original message before transmission).
 Consider:
+
 ```
   m = 1101011011
   poly = 10011
