@@ -104,7 +104,7 @@ Remember the `XOR` table:
 
 
 >"The reader should note the similarity between polynomial
-   arithmetic and multiple-precision arithmetic (Section 4.3.1), where
+   arithmetic and multiple-precision arithmetic, where
    the radix b is substituted for x. The chief difference is that the
    coefficient u_k of x^k in polynomial arithmetic bears little or no
    relation to its neighboring coefficients x^{k-1} [and x^{k+1}], so
@@ -189,3 +189,36 @@ What then is division? Division must define when a number `goes into` another. G
                  -----
                   1110 = Remainder. ~ source: Tanenbaum81
 ```
+
+
+### So, how do we derive our CRC?
+First, we need to choose a polynomial. Let te width be w. For instance, if we choose 110111, the width `w` is 5 because it is the value of the highest power of two in the binary string. Append `w` number of zeroes to the message `m` whose `crc` checksum we want to calculate. In this case, if `m` were `11001010101`, it'd become `1100101010100000`, with 5 zeroes. The next thing to do is to divide our changed `m` by the polynomial using the polynomial arithmetic we described above. 
+The quotient is useless. The remainder will either have width `w` or less. Think about it. It couldnt be of the same length as the poly we used (which would be `w+1`). It would either be `w` or less. The remainder is the `crc checksumm`. We append it to the original message. The key is to ensure that the register remains 
+sized as `w` even if it is less than `w` in length. If it is less than `w` in length, then zeroes will fill in the first few positions to make up for it.
+The reason is because when we want to evaluate the integrity of the data, we would only need to divide by the polynomial we chose (which is usually chosen by a standard) and check that it yields zero as remainder. Now, I'll explain why it must be so if you don't see it yet. (I didn't see it at first because it wasn't clearly stated that the register size mut retain its width when appending te remainder to the original message before transmission).
+Consider:
+```
+  m = 1101011011
+  poly = 10011
+  m' = 11010110110000  (we appended `0000`, which is of width 4, the degree of the poly)
+  After dividing, our remainder is: 1110
+  We append it to m, and so out transmitted message is: 11010110111110
+  Consider that 11010110111110 is equal to 11010110110000 + 1110
+  By remainder theorem if a(b + r/a) = z, meaning that when we divide z by a, we get b, which is a whole number, 
+  and r/a which is a fraction because r is less than a. In such a case, z = ab + r, and to get z back, we only need add ab to r.
+  In our case, adding the message `m` to the remainder of its division by `poly` (which is essentially what we did when we appended the remainder
+  of width `w` to `m` before transmitting) means that what is left after dividing `m` by `poly`, being `r` or `crc`, has been
+  added back to the fatter `m`. Now, we were not supposed to add it, we were supposed to remove it so that that 
+  remainder which kept us from dividing neatly would be removed, but it does not matter because in out polynomial arithmetic, 
+  addition is isomorphic to subtraction. When we then divide the entire transmitted polynomial by our divisor (the poly we chose),
+  what we should get as remainder is zero. 
+```
+
+
+## The easy but non-performant algorithm
+From the liong division we did above, we can get an algorithm. First we choose a polynomial `poly`, then we fill our `crc` register with `w` zeroes.
+We do not need to use (and indeed we shouldn't) a register of size `w+1` which is the width of the `poly`. We append `w` zeroes to our polynomial and our shifting and addition begins.
+We lay out the `m'` from its higest bit to its lowest bit, and we move from lest to right.
+Now, as we move, we shft the `crc` register to the left by one and drop down a bit from `m'` to take the place of the bit that would've been replaced by zero after a left shift. Knowing that for every shift left, a bit falls off - the leftmost one- we check the value of that bit tat falls off, if it is 1 then we `xor` our register against `poly`, if it isn't, we pass which is the same as `xor`-ing the register (i.e. the `crc`) against zero, as `xor`-ing against a zeroed mask is a no-op. The final value in the register after consuming our last bit (whhich must be a zero, remember?) is the `crc` checksum. All we need do is append it to the message `m` and transmit. The receiver needs only to take the transmitted message and subject it to our procedure for polynomial arithmetic (the shiftings and `xor`-ings) without doing anything to the messge recieved. If the remainder left in the reister is zero, then they may accept it. Otherwise, they have their rights to say the message is compromised. 
+
+_But this algorithm is slow_
