@@ -98,3 +98,11 @@ Think about it. If you define a method for a value, the value itself is left unc
     seen := make(map[string]struct{}{}) //empth struct literal struct{}{} is used because of its zero value. we don't need its value
     _, exists := seen[key] // exists tells us if the map has this entry
     ```
+11. To ensure globally that a type implements an interface, create a package-level blank variable assigning a (non-defined) literal of that type to value of that  interface. e.g. 
+    ```
+    var _ UserServiceInterface = (*UserServiceStruct)(nil) //checks if the pointer to the struct UserServiceStruct implements UserServiceInterface. This is           //possible because nil is value assignable to a pointer
+    //if OTOH, the value is to be checked against a struct value, and not its poinnter, then use an empth struct:
+    var _ UserServiceInterface = UserServiceStruct{};
+    ```
+    
+  
