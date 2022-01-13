@@ -96,5 +96,5 @@ Think about it. If you define a method for a value, the value itself is left unc
     e.g.
     ```
     seen := make(map[string]struct{}{}) //empth struct literal struct{}{} is used because of its zero value. we don't need its value
-    for 
+    _, exists := seen[key] // exists tells us if the map has this entry
     ```
