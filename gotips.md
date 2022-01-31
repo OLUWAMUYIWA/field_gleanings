@@ -104,5 +104,32 @@ Think about it. If you define a method for a value, the value itself is left unc
     //if OTOH, the value is to be checked against a struct value, and not its poinnter, then use an empth struct:
     var _ UserServiceInterface = UserServiceStruct{};
     ```
-    
+12. `Go` for loops have ageneral design. One interesting one is: for [instantiation]; [boolean expr], [statement]. This is useful initerating over lists:
+
+    ```go
+    alist := list.New()
+   alist.PushBack("a")
+   alist.PushBack("b")
+   alist.PushBack("c")
+
+   fmt.Println("Next")
+
+   for e := alist.Front(); e != nil; e = e.Next() {
+       fmt.Println(e.Value) // print out the elements
+   }
+
+   fmt.Println("---------")
+   fmt.Println("Prev")
+
+   for e := alist.Back(); e != nil; e = e.Prev() {
+       fmt.Println(e.Value) // print out the elements
+   }
+    ```
   
+  ```graphvis
+  digraph simp {
+    A -> B;
+    B -> C;
+    C -> D;
+  }
+  ```
