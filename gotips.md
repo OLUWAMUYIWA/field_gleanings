@@ -125,11 +125,3 @@ Think about it. If you define a method for a value, the value itself is left unc
        fmt.Println(e.Value) // print out the elements
    }
     ```
-  
-  ```graphvis
-  digraph simp {
-    A -> B;
-    B -> C;
-    C -> D;
-  }
-  ```
