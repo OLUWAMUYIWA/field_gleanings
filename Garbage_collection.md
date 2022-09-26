@@ -16,8 +16,10 @@ objects.
 
 ## Reference Counting
 Ive seen enough of this in the Rust type system (Rust doesn't have a GC though.) The RC approach tracks dead objects. How? Per every object created 
-(those which  require heap allocation), the GC helps it behin ife with a reference  count of 1. the moment you create a pointer to it,the RC bumps up by one. 
-All the time. Objects are freed when the counter becomes zero. With RC, pauses are smaller and mutation is costly.
+(those which  require heap allocation), the GC helps it behin ife with a reference  count of 1. The moment you create a pointer to it,the RC bumps up by one. 
+When you drop a pointer to it, the count reduces by one. Objects are freed when the counter becomes zero. With RC, pauses are smaller but creating references is costly 
+since you have to bump up the RC. There's another approcah whic helps solve the performance problem: `Deferred Reference Counting`. Here, the incrs and decrs 
+dont happen immediately. They are batched. This helps increase thoroughput.
 
 > the situation with stacks i.e. local variables is different. they simply dont exist after functions return. the processor achieves this
 by changing stack pointer value to allow those written ones to be overwriten. theyre essentially gone). 
