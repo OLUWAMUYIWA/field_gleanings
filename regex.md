@@ -1,22 +1,22 @@
 ### What is Regex?
 
-[comment]: <> (Todo: look for two complex examples of regex in use and tear them apart)
+[comment]: <> (Todo: Look for two complex examples of regex in use and tear them apart)
 > Here are the two most important resources describing **regex** that I've seen:  
 > - Syntax: [re2](https://github.com/google/re2/wiki/Syntax)
 > - Concept: [russ cox](https://swtch.com/~rsc/regexp/regexp1.html)
 
 So, what is `regex`?  
-By my understanding, a regex is a construct (a programming item) that matches strings. An `re` is used to describe as string charccter by character.
-The simplest `re` is a `literal` string character. A `literal` `re` matches  itself simple. No complications.  
+By my understanding, a regex is a construct (a programming item) that matches strings. A `re` is used to describe a string character by character.
+The simplest `re` is a `literal` string character. A `literal` `re` matches  itself simply. No complications.  
 
-But it gets more complex when we have two `re`s. When we have `e1e2` side by side, we want to match the strings `s` and `t` joined toether by it.
+But it gets more complex when we have two `re`s. When we have `e1e2` side by side, we want to match the strings `s` and `t` joined together by it.
 When we have `e1|e2`, it means that we're good with either `s` matching it or `t` matching it.  
 
 > In `go`, put `re`s in `` so you don't have to escape `\`. Those strings in `` are called _raw strings_ . In `rust`, do the same by putting the strings inside r""
 
 `re` uses _metacharacters_ as operators. There are many of them, and they are really all there is to learn about `re`. We'll go through them one by one.
 
-`.` is the ,ost general metacharacter. It matches anything except *newline*, i.e. `\n` (or `\ln` in windows). This exception may be removed if we turn
+`.` is the most general metacharacter. It matches anything except *newline*, i.e. `\n` (or `\ln` in Windows). This exception may be removed if we turn
  on the `s` flag. `.` will begin to match everything including *newline*
  
  
@@ -24,16 +24,16 @@ When we have `e1|e2`, it means that we're good with either `s` matching it or `t
 - `*`: 0 or more
 - `+`: 1 or more
 - `?`: 0 or `
-> reps are quite easy to handle. They aren't more complex than that
+> Reps are quite easy to handle. They aren't more complex than that
 
 ##### Precedence of operators
-Precedence means the same thing it means in Math. It helps to estaplish some form of flow or order of operations. WHich one must come before  
-the other? Ops with weaker precedence come later than ops with stronger precedenceFrom lowest to highest.
+Precedence means the same thing it means in Math. It helps to establish some form of flow or order of operations. Which one must come before  
+the other? Ops with weaker precedence come later than ops with stronger precedence from lowest to highest.
  > alternation < concatenation < repetition 
  >    > e.g. `e1|e2e3*` goes this way: `e3*` gets evaluated, then the result has to be concatenated to `e2`, which is then `orred` against `e1`.
 
 According to the `re2` docs, the above suffices for the original *unix* `egrep`. It suffices to describe any *regular language*, which it loosely describes as a
-set of strngs tjat can be matched in one fell swoop using only a fixed size of memory.
+set of strings that can be matched in one fell swoop using only a fixed size of memory.
 
 ## SubSections
 
@@ -41,14 +41,14 @@ set of strngs tjat can be matched in one fell swoop using only a fixed size of m
 |flag |description|
 |-----|------------|
 |`i`|make `re` case-insensitive, default is false|
-|`m`|this flag is powerful. Naturally, `^` and `$` would macth the beginning and end of a string or text, but `m` makes them match the beginning and end of a new line if the string is multi-lined (i.e. it has `\n` characters in it)|
+|`m`|this flag is powerful. Naturally, `^` and `$` would match the beginning and end of a string or text, but `m` makes them match the beginning and end of a new line if the string is multi-lined (i.e. it has `\n` characters in it)|
 |`s`| it lets `.` match newline charcater|
 |U|powerful too. makes all repetitions ungreedy. i.e. `x*` becomes `x*?`, `x+` becomes `x+?`, `x?` becomes `x??` etc.|
 
-> **now what is greediness?** In repetitions, a greedy `re` will keep matching until the instruction fails, while a non-greedy will stopmatching after the first condiction of match is fulfilled
+> **Now what is greediness?** In repetitions, a greedy `re` will keep matching until the instruction fails, while a non-greedy will stop matching after the first condiction of the match is fulfilled
 >
 > For instance: `<.*>` would probably be expected to match `<br>` in the following string: `<br> My name is muyi </br>`, but no, it will match everything because of greed.
-> It is able to match everything in this case because every character except `\n` is matched by `.`, so apparently, even the first `>` matches, and so it continues until the last, thats when the match is broken.
+> It is able to match everything in this case because every character except `\n` is matched by `.`, so apparently, even the first `>` matches, and so it continues until the last when the match is broken.
 > A simpler example is the `re`: `h.+l` which will match the entire string `hell` and only the substring `hell` in `hello`, but if what you want is just
 > `hel`, you have to make your `re`: `h.+?l`, which will prefer to stop at the first instance of the repetition rather than the last.
 
@@ -78,14 +78,14 @@ set of strngs tjat can be matched in one fell swoop using only a fixed size of m
 
 ### Grouping
 `Group`s are very powerful in `re` because of several reasons:
-- you can name or index a group and use it to match substrings of a string. cool
+- You can name or index a group and use it to match the substrings of a string. cool
 - You can create different semantics using different sets of `metacharacters` within the group.
 
-Everything inside an un-escaped `()` pair is a group. The following are the semantics it supports
+Everything inside an unescaped `()` pair is a group. The following are the semantics it supports
 |construct|semantics|
 |----|------|
-|`(re)`|captures a substring, a submatch, and the substring it indexed from left to right, this particular one being one of the indexed substrings|
-|`(?P<name>re)`|It needs a name to name the index key, so its a submatch indexed by key (name). The `re` that is matched stays just in front of the closing angular bracket|
+|`(re)`|captures a substring, a sub match, and the substring it indexed from left to right, this particular one being one of the indexed substrings|
+|`(?P<name>re)`|It needs a name to name the index key, so its a sub-match indexed by key (name). The `re` that is matched stays just in front of the closing angular bracket|
 |`(?:re)`|non-capturing group, means that it  matches without capturing, in essence, the matched characters don't get stored, but are useful only to indicate their presence|
 |`(?flags)`|set flags withing current group. I've seen this prepended at the beginning of an `re` that hs several subgroups, and I take it to mean that even the entire regex is a group as well, so I can put it inside a subgroup to set the flag for that group or generally outside at the beginning. Non-capturing|
 |`(?flags:re)`|set this flag whenever you're evaluating this particular `re`. Non-capturing|
@@ -96,16 +96,16 @@ Everything inside an un-escaped `()` pair is a group. The following are the sema
 ### Empty strings
 |`re`|description|
 |-----|----|
-|`^`|matchss the beginning of a string. If `m` flsg is set, this character also matches the beginning of a new line|
-|`$`|matches the end of a string(or text). It is same as `\z`, **not** `\Z`. If `m` flag is set, the same `$` character matches the end of a line|
-|`\A`| beginning of string(or text) anyday regardless of `m` flag's value|
-|`\b`|quite cool, slightly complex, but it isn't. It matches an `ascii` word boundary, what this means is that that there's `\w` (ascii word) on one side, and a `\W` i.e. non-ascii on the other side, or an `\A` beginning of a new text or a `\z` meaning end of text on the other side. Remember that characters like `\n` new line are ascii, I guess that's why `$` won't work here|
-|`\B`| not an ascii word boundary. What does this even mean? Is it useful? Wel it does, it matches _non-strings_ or *empty strings* that negate the condition stated above|
-|`\z`| mentioned above. it means end of text or end of string|
+|`^`| matches the beginning of a string. If `m` flag is set, this character also matches the beginning of a new line|
+|`$`|matches the end of a string(or text). It is the same as `\z`, **not** `\Z`. If `m` flag is set, the same `$` character matches the end of a line|
+|`\A`| beginning of string(or text) any day regardless of `m` flag's value|
+|`\b`|quite cool, slightly complex, but it isn't. It matches an `ASCII` word boundary, what this means is that there's `\w` (ascii word) on one side, and a `\W` i.e. non-ascii on the other side, or an `\A` beginning of a new text or a `\z` meaning end of the text on the other side. Remember that characters like `\n` new line are ASCII, I guess that's why `$` won't work here|
+|`\B`| not an ASCII word boundary. What does this even mean? Is it useful? Well it does, It matches _non-strings_ or *empty strings* that negate the condition stated above|
+|`\z`| mentioned above. It means end of text or end of string|
 
 
 ### Escape Sequences
-we need escape sequences to match what charcters would have been interpreted as metacharacters if left unescaped
+We need escape sequences to match what characters would have been interpreted as metacharacters if left unescaped
 |`re`|description|
 |----|-----|
 |`\a`|ascii bell character `\007`|
@@ -114,21 +114,21 @@ we need escape sequences to match what charcters would have been interpreted as 
 |`\r`|carriage return|
 |`\t`|tab space|
 |`\123`|octal character code, up to three digits|
-|`\x7F`|hex character code, exactly 2 diits, this would be an ascii character, i guess|
-|`\x{10FFFF}`|macthes hex character code, standing for character, would be utf-8 I guess|
+|`\x7F`|hex character code, exactly 2 digits, this would be an ASCII character, I guess|
+|`\x{10FFFF}`|macthes hex character code, standing for the character, would be utf-8 I guess|
 |`\C`|this matches a single byte, any single byte, even when in utf-8 mode|
 
 
 ### Character Classes
-Character classes are usually in between `[` and `]`. And when theyre used,t tyey match only one character. This character can of course be repeated, can be selected from a set of possible characters.
+Character classes are usually in between `[` and `]`. And when they're used,t they match only one character. This character can of course be repeated and can be selected from a set of possible characters.
 |type|description|
 |----|----|
 |`x`|the simplest, matches the exact literal, if it is also a metacharacter, you have to escape it|
-|`A-Z`|a character range, chooses one that matches. its inclusive|
+|`A-Z`|a character range, choose one that matches. It's inclusive|
 |`\d`| example of *perl* character class|
-|`[:foo:]`|example of ascii character class|
-|`\p{Foo}`|names Unicode character class. Class name is `Foo`|
-|`\pF`|second type of Unicode character class. This ine is one-lettered|
+|`[:foo:]`|example of ASCII character class|
+|`\p{Foo}`|names Unicode character class. The class name is `Foo`|
+|`\pF`| the second type of Unicode character class. This one is one-lettered|
 
 Now to use named character classes as class elements:
 |`re`|descritpion|
@@ -142,15 +142,15 @@ Now to use named character classes as class elements:
 |`[^\p{Name}]`| 	named Unicode property inside negated character class|
 
 
-### Perl Character Casses
-All Perl character classes match ascii characters
+### Perl Character Classes
+All Perl character classes match ASCII characters
 |`re`|description|
 |----|----|
 |`\d`|digits. equivalent to `[0-9]`|
 |`\D` or `^\d`|not digit. equivalent to `[^0-9]`|
-|`\s` |anything space. equivalent to `[\t\f\n ]`, i.e tab, form feed, newline, and space. All ascii one-byte characters|
+|`\s` |anything space. equivalent to `[\t\f\n ]`, i.e. tab, form feed, newline, and space. All ASCII one-byte characters|
 |`\S`|opposite of `\s`|
-|`\w`|ascii word. equivalent to `[0-9a-zA-Z_]`, i.e the character class that consists of the range of digits, lower-case letters, upper-case letters, and `_`|
+|`\w`|ascii word. equivalent to `[0-9a-zA-Z_]`, i.e. the character class that consists of the range of digits, lower-case letters, upper-case letters, and `_`|
 |`\w`|opposite of `\w`. equivalent to `^\w`|
 
 
