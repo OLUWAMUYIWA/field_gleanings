@@ -1,0 +1,1 @@
+- Get the size of table `linkedin_company_slug` on disk: `SELECT pg_size_pretty( pg_total_relation_size('linkedin_company_slug') );`
